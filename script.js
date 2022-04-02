@@ -9,7 +9,9 @@ var gamePlaying = false;
 var tonePlaying = false;
 var volume = 0.5;
 var guessCounter = 0;
-var clueHoldTime = 1000;
+var clueHoldTime = 800;
+var timer;
+var timerTimeout;
 
 function patternGen() {
   pattern = [];
@@ -30,10 +32,16 @@ function startGame(){
   gamePlaying = true;
   document.getElementById("startBtn").classList.add("hidden");
   document.getElementById("stopBtn").classList.remove("hidden");
+  document.getElementById("stopBtn").style.pointerEvents = "none";
+  setTimeout(resumePointer, 1000, "stopBtn");
+  document.getElementById("Timer").innerHTML = "Time leave : 0:04";
+  document.getElementById("strikes").innerHTML = " Strikes leave : 3";
   playClueSequence();
 }
 function stopGame(){
   gamePlaying = false;
+  endTimer(timer);
+  clearTimeout(timerTimeout);
   document.getElementById("startBtn").classList.remove("hidden");
   document.getElementById("stopBtn").classList.add("hidden");
 }
@@ -51,12 +59,13 @@ function playSingleClue(btn) {
     setTimeout(clearButton, clueHoldTime, btn);
   }
 }
-function resumePointer() { // helper method to resume pointerEvents
-  return document.getElementById("gameButtonArea").style.pointerEvents = "auto";
+function resumePointer(btn) { // helper method to resume pointerEvents
+  return document.getElementById(btn).style.pointerEvents = "auto";
 }
 function playClueSequence() {
+  endTimer(timer);
   document.getElementById("gameButtonArea").style.pointerEvents = "none"; // pause pointerEvents when clue playing
-  clueHoldTime *= 0.7;
+  clueHoldTime *= 0.85;
   guessCounter = 0;
   context.resume();
   let delay = nextClueWaitTime;
@@ -66,12 +75,35 @@ function playClueSequence() {
     delay += clueHoldTime;
     delay += cluePauseTime;
   }
-  setTimeout(resumePointer, delay); // resume pointerEvents after playing clues.
+  setTimeout(resumePointer, delay, "gameButtonArea"); // resume pointerEvents after playing clues.
+  timerTimeout = setTimeout(startTimer, delay - 1000, delay + 2000) //start Timer
   
 }
-
+//helper function for calculating millisecond to minutes and seconds
+function millisToMinutesAndSeconds(millis) {
+  if (millis < 0) return 0 + ":" + (0 < 10 ? '0' : '') + 0;
+  var minutes = Math.floor(millis / 60000);
+  var seconds = ((millis % 60000) / 1000).toFixed(0);
+  return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+}
+function startTimer(time) {
+  timer = setInterval(function() {
+    document.getElementById("Timer").innerHTML = "Time leave : " + millisToMinutesAndSeconds(time);
+    time -= 1000;
+    if (time < -500) return loseGame();
+  }, 1000)
+}
+function endTimer(timerToEnd) {
+  clearInterval(timerToEnd);
+}
 
 function loseGame() {
+  mistakes++;
+  document.getElementById("strikes").innerHTML = "Strikes leave : " + (3 - mistakes);
+  if (mistakes < 3) {
+    playTone(404, 20);
+    return playClueSequence();
+  }
   stopGame();
   alert("Game Over. You lost.")
 }
@@ -79,19 +111,15 @@ function winGame() {
   stopGame();
   alert("Game Over. You won!")
 }
+
 function guess(btn) {
-  
   console.log("user gussed: " + btn);
   if (!gamePlaying){
     return;
   }
 
   if (btn != pattern[guessCounter]){ //guess not correct
-    mistakes++;
-    playTone(2, 20);
-    if (mistakes == 3) return loseGame();
-    playClueSequence();
-    return;
+    return loseGame();
   }
   // else if guess correct
   
@@ -109,15 +137,16 @@ function guess(btn) {
 
 // Sound Synthesis Functions
 const freqMap = {
-  1: 261.6,
-  2: 329.6,
-  3: 392,
-  4: 466.2,
-  5: 400,
-  6: 200,
-  7: 300,
-  8: 400,
-  9: 500,
+  1: 250,
+  2: 300,
+  3: 350,
+  4: 400,
+  5: 450,
+  6: 500,
+  7: 550,
+  8: 600,
+  9: 650,
+  404: 280
 }
 function playTone(btn,len){ 
   o.frequency.value = freqMap[btn]

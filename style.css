@@ -15,23 +15,27 @@ body {
   background-color: slategrey;
   color: white;
   margin: 2em;
-  font-family: helvetica, arial, sans-serif;
+  font-family: helvetica, arial, serif;
   line-height: 1.5;
 }
 
 h1{
-  font-family: verdana, arial, sans-serif; 
+  font-family: verdana, arial, serif; 
 }
 
 button{
-  padding: 10px;
+  padding: 15px;
+  width:100px;
   border-radius: 20px;
+  font-size:15px;
+  font-family:serif;
+  font-weight:bold;
 }
 .hidden {
   display: none;
 }
 #startBtn{
-  background: white;
+  background: Lavender;
   box-shadow: 0px 0px 2px 2px rgb(0,0,0);
   
 }
@@ -40,11 +44,27 @@ button{
   box-shadow: 0px 0px 2px 2px rgb(0,0,0);
 
 }
+#strikes{
+  display:inline;
+  float:right;
+  font-family:serif;
+  font-size:20px;
+  font-weight:bold;
+  color:PaleGoldenRod;
+}
+#Timer{
+  font-family:serif;
+  font-size:15px;
+  font-weight:bold;
+  color:PaleGoldenRod;
+}
+
 #gameButtonArea > button {
   width:200px;
   height:200px;
-  margin:2px;
+  margin:3px;
 }
+
 #button1 {
   background: lightgreen;
   box-shadow: 0px 0px 2px 2px rgb(0,0,0);
@@ -52,7 +72,6 @@ button{
 #button1:active, #button1.lit{
   background:green;
 }
-
 
 #button2 {
   background: lightblue;

@@ -78,7 +78,7 @@ If you recorded multiple GIFs for all the implemented features, you can add them
 
 ## Interview Recording URL Link
 
-[My 5-minute Interview Recording](your-link-here)
+[My 5-minute Interview Recording](https://www.kapwing.com/videos/6257763fb7c1cd00c3b4f623)
 
 ## License
 
